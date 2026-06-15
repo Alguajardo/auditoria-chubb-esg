@@ -1,5 +1,6 @@
 import streamlit as st
 from fpdf import FPDF
+import io
 
 st.title("Plataforma de Auditoría ESG")
 
@@ -13,20 +14,15 @@ if st.button("Generar Informe"):
     pdf.ln(10)
     pdf.cell(0, 10, "Informe generado correctamente con fpdf2.", ln=True)
     
-    # 2. Generar el contenido en memoria
-    # Usamos .output(dest='S') para obtener el contenido como string/bytes
-    pdf_output = pdf.output(dest='S')
+    # 2. Guardar en un buffer de memoria (BytesIO)
+    # FPDF.output() devuelve bytes directamente en fpdf2 si no especificas ruta
+    pdf_bytes = pdf.output()
+    buffer = io.BytesIO(pdf_bytes)
     
-    # 3. Convertir explícitamente a bytes (esto soluciona el error)
-    if isinstance(pdf_output, str):
-        pdf_bytes = pdf_output.encode('latin-1')
-    else:
-        pdf_bytes = pdf_output
-    
-    # 4. Botón de descarga con bytes puros
+    # 3. Botón de descarga utilizando el buffer
     st.download_button(
         label="Descargar Informe",
-        data=pdf_bytes,
+        data=buffer,
         file_name="Reporte_ESG.pdf",
         mime="application/pdf"
     )
