@@ -24,34 +24,9 @@ with tab1:
         st.write("2. **Párrafo 28 (Métricas):** Brecha significativa detectada (Falta de Scope 3).")
         st.info("El sistema ha procesado la información según tus parámetros metodológicos.")
 
-# --- PESTAÑA 2: CHATBOT EXPERTO IFRS S1/S2 ---
-with tab2:
-    st.header("Asistente Experto IFRS S1 y S2")
-    
-    # Contexto experto (Simulación de "Ingeniería de Prompts")
-    prompt_experto = """
-    Actúa como un auditor senior experto en sostenibilidad bajo los estándares IFRS S1 y S2. 
-    Tu objetivo es analizar brechas de reportabilidad, conectividad financiera y 
-    alineación con la gobernanza, estrategia, gestión de riesgos y métricas.
-    """
-    
-    consulta = st.text_input("Realiza tu consulta técnica sobre IFRS S1/S2:")
-    
-    if st.button("Consultar al Experto"):
-        if consulta:
-            st.write("---")
-            # Simulación de respuesta experta basada en los estándares
-            if "brecha" in consulta.lower():
-                respuesta = "Para identificar brechas significativas, revisa si la memoria conecta los riesgos climáticos con los estados financieros (IFRS S1). Evalúa si la entidad revela el proceso de identificación de riesgos (IFRS S2)."
-            elif "gobernanza" in consulta.lower():
-                respuesta = "La IFRS S1 exige revelar la gobernanza de los riesgos de sostenibilidad. Verifica si el directorio tiene supervisión directa y si existen comités dedicados."
-            else:
-                respuesta = "Analiza tu consulta bajo los 4 pilares: Gobernanza, Estrategia, Gestión de Riesgos y Métricas (IFRS S1 y S2)."
-            
-            st.info(f"**Respuesta del Experto:**\n\n{respuesta}")
-        else:
-            st.warning("Por favor, ingresa una pregunta técnica.")
+Respuesta del Experto:
 
+Analiza tu consulta bajo los 4 pilares: Gobernanza, Estrategia, Gestión de Riesgos y Métricas (IFRS S1 y S2).
 # --- PESTAÑA 3: GENERADOR DE INFORMES (FORMATO APA 7) ---
 with tab3:
     st.header("Generador de Informe Técnico - Formato APA 7")
