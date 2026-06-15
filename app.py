@@ -27,6 +27,29 @@ with tab1:
 Respuesta del Experto:
 
 Analiza tu consulta bajo los 4 pilares: Gobernanza, Estrategia, Gestión de Riesgos y Métricas (IFRS S1 y S2).
+
+# --- PESTAÑA 2: CHATBOT IFRS S1/S2 (EXPERTO TÉCNICO) ---
+with tab2:
+    st.header("Asistente Técnico IFRS S1/S2")
+    consulta = st.text_input("Pregunta sobre gobernanza, estrategia o métricas:", key="input_chat_2")
+    
+    if st.button("Consultar Normativa", key="btn_chat_2"):
+        if "gobernanza" in consulta.lower():
+            st.markdown("""
+            **Referencia Técnica (IFRS S1 - Requerimientos Generales):**
+            * **Párrafo 26:** El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar los riesgos y oportunidades relacionados con la sostenibilidad.
+            * **Párrafo 27:** La entidad debe revelar:
+                a) Los órganos de gobierno o cuerpos responsables.
+                b) Cómo el gobierno corporativo garantiza los controles y procedimientos.
+            """)
+        elif "estrategia" in consulta.lower():
+            st.markdown("""
+            **Referencia Técnica (IFRS S1 - Estrategia):**
+            * El objetivo es permitir que los usuarios comprendan cómo los riesgos de sostenibilidad afectan el modelo de negocio, la estrategia y los flujos de efectivo de la entidad a corto, mediano y largo plazo.
+            """)
+        else:
+            st.info("Selecciona un pilar: Gobernanza, Estrategia, Gestión de Riesgos o Métricas para obtener la cita textual de IFRS S1.")
+
 # --- PESTAÑA 3: GENERADOR DE INFORMES (FORMATO APA 7) ---
 with tab3:
     st.header("Generador de Informe Técnico - Formato APA 7")
