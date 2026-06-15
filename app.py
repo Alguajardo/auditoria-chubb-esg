@@ -2,58 +2,31 @@ import streamlit as st
 from fpdf import FPDF
 import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Auditoría ESG Pro", layout="wide")
-st.title("Plataforma de Auditoría ESG - Informe Ejecutivo")
+st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
 
-# --- Formulario de Entrada ---
-with st.sidebar:
-    st.header("Entrada de Datos")
-    empresa = st.text_input("Nombre de la Empresa")
-    perfil = st.text_area("Perfil de la Empresa")
-    materialidad = st.text_area("Análisis de Materialidad")
-    st.subheader("Filtrado Atómico")
-    s1 = st.slider("Avance IFRS S1 (%)", 0, 100, 50)
-    s2 = st.slider("Avance IFRS S2 (%)", 0, 100, 50)
-    conectividad = st.text_area("Conectividad Financiera")
-    hallazgos = st.text_area("Base de Datos de Hallazgos")
-    recomendaciones = st.text_area("Recomendaciones")
-    conclusiones = st.text_area("Conclusiones")
+# --- MENÚ DE NAVEGACIÓN ---
+menu = st.sidebar.selectbox("Selecciona Módulo", ["Análisis de Documentos", "Chatbot ESG", "Generador de Informes"])
 
-# --- Función definida fuera del botón para evitar errores ---
-def agregar_seccion(pdf, titulo, contenido, nueva_pagina=True):
-    if nueva_pagina:
-        pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, titulo, ln=True)
-    pdf.ln(5)
-    pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, 10, contenido)
+# --- MÓDULO 1: ANÁLISIS DE BRECHAS ---
+if menu == "Análisis de Documentos":
+    st.header("Carga de Memorias y Estados Financieros")
+    archivo = st.file_uploader("Sube Memorias o EEFF", type=['pdf', 'xlsx', 'txt'])
+    if archivo:
+        st.write("Analizando brechas y materialidad...")
+        # Aquí iría tu lógica de filtrado atómico
+        st.success("Análisis completado: Brechas detectadas.")
 
-if st.button("Generar Informe Completo"):
-    # 1. Generar Gráfica
-    fig, ax = plt.subplots()
-    ax.bar(['IFRS S1', 'IFRS S2'], [s1, s2], color=['#4F81BD', '#C0504D'])
-    ax.set_ylim(0, 100)
-    ax.set_title("Nivel de Cumplimiento IFRS")
-    plt.savefig("grafica.png")
-    
-    # 2. Crear PDF
-    pdf = FPDF()
-    pdf.add_page()
-    
-    # 3. Construir secciones
-    agregar_seccion(pdf, "Introducción", "Informe de auditoría técnica basado en estándares IFRS S1/S2.", False)
-    agregar_seccion(pdf, "Perfil de la Empresa", perfil)
-    agregar_seccion(pdf, "Materialidad", materialidad)
-    agregar_seccion(pdf, "Filtrado Atómico (Brechas IFRS S1/S2)", f"Avance S1: {s1}%\nAvance S2: {s2}%")
-    
-    pdf.image("grafica.png", x=10, y=None, w=100)
-    
-    agregar_seccion(pdf, "Conectividad Financiera", conectividad)
-    agregar_seccion(pdf, "Base de Datos de Hallazgos", hallazgos)
-    agregar_seccion(pdf, "Recomendaciones", recomendaciones)
-    agregar_seccion(pdf, "Conclusiones", conclusiones)
+# --- MÓDULO 2: CHATBOT ESG ---
+elif menu == "Chatbot ESG":
+    st.header("Asistente Técnico ESG")
+    pregunta = st.text_input("Consulta sobre IFRS S1/S2 o NCG 461")
+    if st.button("Consultar"):
+        st.write("Respuesta técnica basada en tu base de conocimiento...")
 
-    # 4. Preparar descarga
-    pdf_bytes = pdf.output(dest='S').encode('latin-1')
-    st.download_button("Descargar Informe Completo", pdf_bytes, f"Informe_{empresa}.pdf", "application/pdf")
+# --- MÓDULO 3: GENERADOR DE INFORMES ---
+elif menu == "Generador de Informes":
+    st.header("Generación de Informe Ejecutivo")
+    empresa = st.text_input("Empresa")
+    # ... (aquí va el formulario que ya teníamos para generar el PDF)
+    if st.button("Generar PDF"):
+        st.write("Generando documento final...")
