@@ -19,36 +19,38 @@ with tab1:
         st.write("1. **Párrafo 12 (Gobernanza):** Alineado con IFRS S1.")
         st.write("2. **Párrafo 28 (Métricas):** Brecha detectada (Falta de Scope 3).")
 
-# --- PESTAÑA 2: CHATBOT IFRS S1/S2 (ROBUSTO) ---
+# --- PESTAÑA 2: CHATBOT ESG CONVERSACIONAL ---
 with tab2:
     st.header("Asistente Técnico IFRS S1/S2")
     
-    # Base de conocimiento (claves en minúsculas para evitar errores)
-    norma_db = {
-        "26": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar los riesgos y oportunidades relacionados con la sostenibilidad.",
-        "27": "Párrafo 27: La entidad debe revelar: a) Los órganos de gobierno, b) Cómo el gobierno corporativo garantiza los controles y procedimientos.",
-        "28": "Párrafo 28: La entidad debe revelar las características de los órganos de gobierno, incluyendo habilidades y competencias requeridas para supervisar riesgos de sostenibilidad.",
-        "estrategia": "Estrategia: La entidad debe revelar cómo los riesgos y oportunidades de sostenibilidad afectan el modelo de negocio, la estrategia y los flujos de efectivo a corto, mediano y largo plazo."
-    }
-    
-    consulta = st.text_input("Ingresa número de párrafo (ej: 28) o pilar (ej: Estrategia):", key="input_chat_2")
-    
-    if st.button("Consultar Normativa", key="btn_chat_2"):
-        # Limpiamos la entrada: quitamos espacios y pasamos a minúsculas
-        busqueda = consulta.strip().lower()
-        
-        # Lógica de búsqueda flexible
-        resultado = None
-        for clave, contenido in norma_db.items():
-            if busqueda in clave.lower():
-                resultado = contenido
-                break
-        
-        if resultado:
-            st.success("Extracto de la norma encontrado:")
-            st.write(resultado)
-        else:
-            st.warning("No se encontró ese párrafo. Intenta con: 26, 27, 28 o Estrategia.")
+    # Inicializar historial de chat
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Mostrar mensajes previos
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    # Input del usuario
+    if prompt := st.chat_input("Pregunta sobre IFRS S1/S2..."):
+        # Guardar y mostrar usuario
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        # Lógica de respuesta inteligente (Simulación de Experto)
+        with st.chat_message("assistant"):
+            # Aquí inyectamos la lógica experta
+            if "28" in prompt or "párrafo 28" in prompt.lower():
+                response = "El Párrafo 28 de IFRS S1 exige revelar las habilidades y competencias que poseen los órganos de gobierno para supervisar riesgos de sostenibilidad."
+            elif "gobernanza" in prompt.lower():
+                response = "La Gobernanza en IFRS S1 busca que los usuarios entiendan cómo el directorio monitorea los riesgos climáticos. ¿Quieres que profundicemos en los párrafos 26 o 27?"
+            else:
+                response = "Como experto en IFRS S1/S2, puedo explicarte los pilares de Gobernanza, Estrategia, Gestión de Riesgos y Métricas. ¿Qué pilar deseas analizar?"
+            
+            st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
 
 # --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7 + CONECTIVIDAD FINANCIERA) ---
 with tab3:
