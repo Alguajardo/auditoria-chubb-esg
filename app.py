@@ -19,39 +19,35 @@ with tab1:
         st.write("1. **Párrafo 12 (Gobernanza):** Alineado con IFRS S1.")
         st.write("2. **Párrafo 28 (Métricas):** Brecha detectada (Falta de Scope 3).")
 
-# --- PESTAÑA 2: CHATBOT ESG CONVERSACIONAL ---
+# --- PESTAÑA 2: CHATBOT IFRS S1/S2 (BÚSQUEDA FLEXIBLE) ---
 with tab2:
     st.header("Asistente Técnico IFRS S1/S2")
     
-    # Inicializar historial de chat
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    # Mostrar mensajes previos
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    # Input del usuario
-    if prompt := st.chat_input("Pregunta sobre IFRS S1/S2..."):
-        # Guardar y mostrar usuario
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        # Lógica de respuesta inteligente (Simulación de Experto)
-        with st.chat_message("assistant"):
-            # Aquí inyectamos la lógica experta
-            if "28" in prompt or "párrafo 28" in prompt.lower():
-                response = "El Párrafo 28 de IFRS S1 exige revelar las habilidades y competencias que poseen los órganos de gobierno para supervisar riesgos de sostenibilidad."
-            elif "gobernanza" in prompt.lower():
-                response = "La Gobernanza en IFRS S1 busca que los usuarios entiendan cómo el directorio monitorea los riesgos climáticos. ¿Quieres que profundicemos en los párrafos 26 o 27?"
-            else:
-                response = "Como experto en IFRS S1/S2, puedo explicarte los pilares de Gobernanza, Estrategia, Gestión de Riesgos y Métricas. ¿Qué pilar deseas analizar?"
-            
-            st.markdown(response)
-            st.session_state.messages.append({"role": "assistant", "content": response})
-
+    # Aquí puedes agregar cuantos párrafos necesites de forma rápida
+    norma_db = {
+        "15": "Párrafo 15: La entidad debe revelar información sobre los riesgos y oportunidades relacionados con la sostenibilidad que podrían afectar sus flujos de efectivo, su acceso a la financiación o el costo del capital.",
+        "26": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar riesgos.",
+        "27": "Párrafo 27: La entidad debe revelar órganos de gobierno y cómo garantizan los controles.",
+        "28": "Párrafo 28: La entidad debe revelar las habilidades y competencias requeridas para supervisar riesgos de sostenibilidad.",
+        "estrategia": "La estrategia debe describir cómo los riesgos afectan el modelo de negocio y flujos de efectivo."
+    }
+    
+    consulta = st.text_input("Ingresa número de párrafo (ej: 15, 26, 28):", key="input_chat_2")
+    
+    if st.button("Consultar Normativa", key="btn_chat_2"):
+        busqueda = consulta.strip().lower()
+        
+        # Búsqueda inteligente que busca si el número ingresado está en nuestra base
+        encontrado = False
+        for clave, contenido in norma_db.items():
+            if clave in busqueda:
+                st.success(f"Extracto técnico encontrado:")
+                st.write(contenido)
+                encontrado = True
+        
+        if not encontrado:
+            # Si no está en la base, damos una respuesta genérica profesional
+            st.info(f"El párrafo {busqueda} no está en mi base de consulta rápida. Sin embargo, el estándar IFRS S1 establece que toda revelación debe ser **material**, **comparable** y **verificable** según el marco de la norma.")
 # --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7 + CONECTIVIDAD FINANCIERA) ---
 with tab3:
     st.header("Generador de Informe Técnico - Formato APA 7")
