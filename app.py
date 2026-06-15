@@ -19,35 +19,36 @@ with tab1:
         st.write("1. **Párrafo 12 (Gobernanza):** Alineado con IFRS S1.")
         st.write("2. **Párrafo 28 (Métricas):** Brecha detectada (Falta de Scope 3).")
 
-# --- PESTAÑA 2: CHATBOT EXPERTO IFRS S1/S2 ---
+# --- PESTAÑA 2: CHATBOT IFRS S1/S2 (ROBUSTO) ---
 with tab2:
     st.header("Asistente Técnico IFRS S1/S2")
     
-    # 1. Base de conocimiento: Estructura de párrafos
+    # Base de conocimiento (claves en minúsculas para evitar errores)
     norma_db = {
         "26": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar los riesgos y oportunidades relacionados con la sostenibilidad.",
         "27": "Párrafo 27: La entidad debe revelar: a) Los órganos de gobierno, b) Cómo el gobierno corporativo garantiza los controles y procedimientos.",
         "28": "Párrafo 28: La entidad debe revelar las características de los órganos de gobierno, incluyendo habilidades y competencias requeridas para supervisar riesgos de sostenibilidad.",
-        "estrategia": "La estrategia debe describir cómo los riesgos de sostenibilidad afectan el modelo de negocio, la estrategia y los flujos de efectivo a corto, mediano y largo plazo."
+        "estrategia": "Estrategia: La entidad debe revelar cómo los riesgos y oportunidades de sostenibilidad afectan el modelo de negocio, la estrategia y los flujos de efectivo a corto, mediano y largo plazo."
     }
     
     consulta = st.text_input("Ingresa número de párrafo (ej: 28) o pilar (ej: Estrategia):", key="input_chat_2")
     
     if st.button("Consultar Normativa", key="btn_chat_2"):
-        # Limpiar la consulta
+        # Limpiamos la entrada: quitamos espacios y pasamos a minúsculas
         busqueda = consulta.strip().lower()
         
-        # 2. Lógica de búsqueda inteligente
-        encontrado = False
+        # Lógica de búsqueda flexible
+        resultado = None
         for clave, contenido in norma_db.items():
-            if clave in busqueda:
-                st.success(f"Extracto de la norma encontrado:")
-                st.write(contenido)
-                encontrado = True
+            if busqueda in clave.lower():
+                resultado = contenido
                 break
         
-        if not encontrado:
-            st.warning("Lo siento, ese párrafo no está en mi base de conocimiento actual. Prueba con '26', '27', '28' o 'Estrategia'.")
+        if resultado:
+            st.success("Extracto de la norma encontrado:")
+            st.write(resultado)
+        else:
+            st.warning("No se encontró ese párrafo. Intenta con: 26, 27, 28 o Estrategia.")
 
 # --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7 + CONECTIVIDAD FINANCIERA) ---
 with tab3:
