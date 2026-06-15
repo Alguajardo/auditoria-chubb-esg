@@ -49,30 +49,47 @@ with tab2:
         if not encontrado:
             st.warning("Lo siento, ese párrafo no está en mi base de conocimiento actual. Prueba con '26', '27', '28' o 'Estrategia'.")
 
-# --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7) ---
+# --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7 + CONECTIVIDAD FINANCIERA) ---
 with tab3:
     st.header("Generador de Informe Técnico - Formato APA 7")
-    empresa = st.text_input("Empresa Auditada", key="emp_nombre")
+    empresa = st.text_input("Empresa Auditada", key="emp_nombre_3")
+    
+    # Inputs para el informe
     introduccion = st.text_area("Introducción:", "El presente informe técnico detalla la auditoría de sostenibilidad basada en los estándares IFRS S1 y S2.")
-    brechas = st.text_area("Análisis (Brechas detectadas):", "Análisis de los párrafos críticos: se observa una brecha en la revelación de alcance 3.")
+    brechas = st.text_area("Análisis (Brechas detectadas):", "Análisis de los párrafos críticos en relación a la norma.")
     recomendaciones = st.text_area("Recomendaciones:", "Se recomienda al directorio fortalecer los mecanismos de gobernanza climática.")
-
-    if st.button("Generar Informe Formato APA", key="btn_pdf_apa"):
+    
+    # Sección de Conectividad Financiera
+    st.markdown("### Conectividad Financiera")
+    nic_check = st.multiselect("Normas NIC vinculadas:", ["NIC 16 (Propiedad, Planta y Equipo)", "NIC 36 (Deterioro de Activos)", "NIC 37 (Provisiones)"])
+    
+    if st.button("Generar Informe Formato APA", key="btn_pdf_apa_final"):
         pdf = FPDF()
         pdf.add_page()
+        
+        # Cabecera APA
         pdf.set_font("Times", 'B', 14)
         pdf.cell(0, 10, f"Informe: {empresa}", ln=True, align='C')
         pdf.ln(10)
         
-        for titulo, contenido in [("Introducción", introduccion), ("Análisis", brechas), ("Recomendaciones", recomendaciones)]:
+        # Contenido Estructurado
+        for titulo, contenido in [("Introducción", introduccion), ("Análisis (Brechas)", brechas), ("Recomendaciones", recomendaciones)]:
             pdf.set_font("Times", 'B', 12)
             pdf.cell(0, 10, titulo, ln=True)
             pdf.set_font("Times", size=12)
             pdf.multi_cell(0, 7, contenido)
             pdf.ln(5)
             
+        # Conectividad Financiera
+        pdf.set_font("Times", 'B', 12)
+        pdf.cell(0, 10, "Conectividad con Normas Financieras (NIC)", ln=True)
+        pdf.set_font("Times", size=12)
+        pdf.multi_cell(0, 7, f"El análisis de sostenibilidad se ha vinculado con: {', '.join(nic_check)} para asegurar la integridad de los Estados Financieros.")
+        
+        # Firma
+        pdf.ln(10)
         pdf.set_font("Times", 'I', 10)
-        pdf.cell(0, 10, "Auditoría por: Alberto Esteban Guajardo Meneses", ln=True)
+        pdf.cell(0, 10, "Auditoría realizada por: Alberto Esteban Guajardo Meneses | Consultor Senior ESG", ln=True)
         
         pdf_bytes = bytes(pdf.output())
-        st.download_button("Descargar Informe APA 7", pdf_bytes, "Informe_ESG.pdf", "application/pdf")
+        st.download_button("Descargar Informe APA 7", pdf_bytes, "Informe_Tecnico_ESG.pdf", "application/pdf")
