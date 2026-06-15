@@ -43,7 +43,7 @@ with tab2:
         else:
             st.write("Por favor, consulta por los pilares IFRS S1 o S2 para obtener el detalle normativo.")
 
-# --- PESTAÑA 3 ---
+# --- PESTAÑA 3: GENERADOR DE INFORMES ---
 with tab3:
     st.header("Generador de Informe Ejecutivo")
     empresa = st.text_input("Nombre de la Empresa")
@@ -56,6 +56,26 @@ with tab3:
         pdf.add_page()
         pdf.set_font("Arial", 'B', 16)
         pdf.cell(0, 10, f"Informe: {empresa}", ln=True)
+        
+        # Gráfica
+        fig, ax = plt.subplots(figsize=(4, 3))
+        ax.bar(['S1', 'S2'], [s1, s2], color=['#2E86C1', '#C0392B'])
+        plt.savefig("grafica.png")
+        pdf.image("grafica.png", x=50, w=80)
+        
+        pdf.set_font("Arial", size=12)
+        pdf.ln(85)
+        pdf.multi_cell(0, 10, f"Resumen:\nS1: {s1}%\nS2: {s2}%\n\nObservaciones:\n{obs}")
+        
+        # --- CORRECCIÓN AQUÍ: .output() devuelve los bytes directamente ---
+        pdf_bytes = pdf.output()
+        
+        st.download_button(
+            label="Descargar Informe PDF",
+            data=pdf_bytes,
+            file_name="Informe_Auditoria.pdf",
+            mime="application/pdf"
+        )
         
         # Gráfica
         fig, ax = plt.subplots(figsize=(4, 3))
