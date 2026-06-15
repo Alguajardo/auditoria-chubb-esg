@@ -2,31 +2,38 @@ import streamlit as st
 from fpdf import FPDF
 import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
+st.set_page_config(page_title="Suite Integral ESG", layout="wide")
+st.title("Plataforma Integral de Auditoría ESG")
 
-# --- MENÚ DE NAVEGACIÓN ---
-menu = st.sidebar.selectbox("Selecciona Módulo", ["Análisis de Documentos", "Chatbot ESG", "Generador de Informes"])
+# Crear pestañas para organizar las herramientas
+tab1, tab2, tab3 = st.tabs(["📊 Análisis y Filtrado", "🤖 Chatbot ESG", "📄 Generador de Informes"])
 
-# --- MÓDULO 1: ANÁLISIS DE BRECHAS ---
-if menu == "Análisis de Documentos":
-    st.header("Carga de Memorias y Estados Financieros")
-    archivo = st.file_uploader("Sube Memorias o EEFF", type=['pdf', 'xlsx', 'txt'])
+# --- Pestaña 1: Análisis y Filtrado Atómico ---
+with tab1:
+    st.header("Análisis de Documentos y Filtrado Atómico")
+    archivo = st.file_uploader("Cargar Memoria o EEFF", type=['pdf', 'xlsx', 'txt'])
     if archivo:
-        st.write("Analizando brechas y materialidad...")
-        # Aquí iría tu lógica de filtrado atómico
-        st.success("Análisis completado: Brechas detectadas.")
+        st.write("Procesando información según metodología de filtrado atómico...")
+        # Aquí puedes llamar a tus funciones de análisis de brechas
+        st.info("Brechas identificadas según NCG 461 e IFRS S1/S2.")
 
-# --- MÓDULO 2: CHATBOT ESG ---
-elif menu == "Chatbot ESG":
-    st.header("Asistente Técnico ESG")
-    pregunta = st.text_input("Consulta sobre IFRS S1/S2 o NCG 461")
-    if st.button("Consultar"):
-        st.write("Respuesta técnica basada en tu base de conocimiento...")
+# --- Pestaña 2: Chatbot ESG ---
+with tab2:
+    st.header("Chatbot Técnico ESG")
+    consulta = st.text_input("Consulta tu base de conocimiento:")
+    if st.button("Enviar Consulta"):
+        st.write("Asistente: [La respuesta de tu IA aparecerá aquí]")
 
-# --- MÓDULO 3: GENERADOR DE INFORMES ---
-elif menu == "Generador de Informes":
-    st.header("Generación de Informe Ejecutivo")
-    empresa = st.text_input("Empresa")
-    # ... (aquí va el formulario que ya teníamos para generar el PDF)
-    if st.button("Generar PDF"):
-        st.write("Generando documento final...")
+# --- Pestaña 3: Generador de Informes ---
+with tab3:
+    st.header("Generador de Informe Ejecutivo")
+    col1, col2 = st.columns(2)
+    with col1:
+        empresa = st.text_input("Nombre de la Empresa")
+        s1 = st.slider("Nivel IFRS S1 (%)", 0, 100)
+    with col2:
+        s2 = st.slider("Nivel IFRS S2 (%)", 0, 100)
+    
+    if st.button("Generar Informe"):
+        # Tu lógica de generación de PDF aquí
+        st.success("Informe generado con éxito.")
