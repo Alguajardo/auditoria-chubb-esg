@@ -33,56 +33,54 @@ with tab2:
         **Pilares IFRS S1/S2:** 1. Gobernanza | 2. Estrategia | 3. Gestión de Riesgos | 4. Métricas.
         """)
 
-# --- PESTAÑA 3: GENERADOR DE INFORMES TIPO ---
+# --- PESTAÑA 3: GENERADOR DE INFORMES (FORMATO APA 7) ---
 with tab3:
-    st.header("Generador de Informe Técnico ESG")
-    empresa = st.text_input("Empresa Auditada", key="empresa_nombre")
+    st.header("Generador de Informe Técnico - Formato APA 7")
+    empresa = st.text_input("Empresa Auditada", key="emp_nombre")
     
     # Estructura del Informe Tipo
-    st.markdown("### Estructura de Informe:")
-    brechas = st.text_area("Hallazgos (Filtrado Atómico - Párrafos):", 
-                           "Ejemplo: Párrafo 15 - La memoria carece de métricas Scope 3.")
-    
-    impacto = st.number_input("Impacto Financiero Estimado (USD)", value=10000, key="impacto_val")
-    probabilidad = st.slider("Probabilidad de Materialidad (%)", 0, 100, 50, key="prob_val")
-    
-    recomendaciones = st.text_area("Recomendaciones Estratégicas (IFRS S1/S2):", 
-                                   "Ejemplo: Implementar comité de riesgos climáticos.")
+    introduccion = st.text_area("Introducción (Contexto de la Auditoría):", 
+                                "El presente informe técnico detalla la auditoría de sostenibilidad basada en los estándares IFRS S1 y S2.")
+    brechas = st.text_area("Análisis (Filtrado Atómico - Brechas detectadas):", 
+                           "Análisis de los párrafos críticos: se observa una brecha en la revelación de alcance 3.")
+    recomendaciones = st.text_area("Recomendaciones Estratégicas:", 
+                                   "Se recomienda al directorio fortalecer los mecanismos de gobernanza climática.")
 
-    if st.button("Generar Informe PDF Estándar", key="btn_pdf_estandar"):
+    if st.button("Generar Informe Formato APA", key="btn_pdf_apa"):
         pdf = FPDF()
         pdf.add_page()
         
-        # Cabecera
-        pdf.set_font("Arial", 'B', 16)
-        pdf.cell(0, 10, f"INFORME TIPO: AUDITORIA ESG - {empresa}", ln=True, align='C')
+        # Configuración APA 7 (Títulos y formato)
+        pdf.set_font("Times", 'B', 12)
+        pdf.cell(0, 10, f"Informe de Auditoría ESG: {empresa}", ln=True, align='C')
         pdf.ln(10)
         
-        # Sección 1: Metodología
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, "1. Metodologia: Filtrado Atomico", ln=True)
-        pdf.set_font("Arial", size=10)
-        pdf.multi_cell(0, 7, "Analisis realizado sobre la base de los parrafos seleccionados para verificar cumplimiento con IFRS S1 y S2.")
+        # Introducción
+        pdf.set_font("Times", 'B', 12)
+        pdf.cell(0, 10, "Introducción", ln=True)
+        pdf.set_font("Times", size=12)
+        pdf.multi_cell(0, 7, introduccion)
+        pdf.ln(5)
         
-        # Sección 2: Brechas
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, "2. Brechas Significativas Detectadas", ln=True)
-        pdf.set_font("Arial", size=10)
+        # Análisis
+        pdf.set_font("Times", 'B', 12)
+        pdf.cell(0, 10, "Análisis Técnico (Filtrado Atómico)", ln=True)
+        pdf.set_font("Times", size=12)
         pdf.multi_cell(0, 7, brechas)
+        pdf.ln(5)
         
-        # Sección 3: Conectividad Financiera
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, "3. Analisis de Conectividad Financiera", ln=True)
-        pdf.set_font("Arial", size=10)
-        conectividad = impacto * (probabilidad / 100)
-        pdf.cell(0, 7, f"Valor en Riesgo (Impacto * Probabilidad): ${conectividad:,.2f} USD", ln=True)
-        
-        # Sección 4: Recomendaciones
-        pdf.set_font("Arial", 'B', 12)
-        pdf.cell(0, 10, "4. Recomendaciones Estrategicas", ln=True)
-        pdf.set_font("Arial", size=10)
+        # Recomendaciones
+        pdf.set_font("Times", 'B', 12)
+        pdf.cell(0, 10, "Recomendaciones Estratégicas", ln=True)
+        pdf.set_font("Times", size=12)
         pdf.multi_cell(0, 7, recomendaciones)
+        pdf.ln(10)
+        
+        # Firma del autor
+        pdf.set_font("Times", 'I', 10)
+        pdf.cell(0, 10, "Auditoría realizada por: Alberto Esteban Guajardo Meneses", ln=True)
+        pdf.cell(0, 10, "Fecha: Junio 2026", ln=True)
         
         # Descarga
         pdf_bytes = bytes(pdf.output())
-        st.download_button("Descargar Informe Técnico PDF", pdf_bytes, "Informe_ESG_Profesional.pdf", "application/pdf")
+        st.download_button("Descargar Informe APA 7", pdf_bytes, "Informe_APA_ESG.pdf", "application/pdf")
