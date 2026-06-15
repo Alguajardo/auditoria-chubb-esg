@@ -18,12 +18,30 @@ with tab1:
     if st.button("Ejecutar Análisis"):
         st.success("Análisis técnico en curso...")
 
-# --- PESTAÑA 2 ---
+# --- PESTAÑA 2: CHATBOT ESG ---
 with tab2:
-    st.header("Asistente Técnico ESG")
-    pregunta = st.text_input("Consulta IFRS S1/S2:")
+    st.header("Asistente Técnico IFRS S1/S2")
+    st.write("Consulta los pilares normativos de IFRS S1 y S2.")
+    consulta = st.text_input("Ingresa tu consulta técnica aquí:")
+    
     if st.button("Consultar"):
-        st.write("Procesando...")
+        st.write("---")
+        # Lógica de respuesta basada en los pilares fundamentales
+        if "s1" in consulta.lower() or "s2" in consulta.lower() or "brecha" in consulta.lower():
+            st.markdown("""
+            **Análisis según IFRS S1/S2:**
+            
+            Como consultor, recuerda que el sistema audita bajo estos 4 pilares fundamentales:
+            
+            1. **Gobernanza:** Procesos, controles y procedimientos para monitorear riesgos y oportunidades.
+            2. **Estrategia:** Enfoque para abordar los riesgos climáticos y su impacto en el modelo de negocio.
+            3. **Gestión de Riesgos:** Cómo se identifican, evalúan y priorizan los riesgos de sostenibilidad.
+            4. **Métricas y Objetivos:** Revelación de indicadores (ej. emisiones GEI, uso de energía).
+            
+            *Tip de Auditoría:* Verifica si la memoria corporativa presenta la información de manera conectada con los estados financieros.
+            """)
+        else:
+            st.write("Por favor, consulta por los pilares IFRS S1 o S2 para obtener el detalle normativo.")
 
 # --- PESTAÑA 3 ---
 with tab3:
