@@ -7,43 +7,32 @@ import io
 st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
 st.title("Plataforma Integral de Auditoría ESG")
 
-# --- DEFINICIÓN DE PESTAÑAS (Esto debe ir ANTES de usar tab1, tab2, tab3) ---
+# Pestañas
 tab1, tab2, tab3 = st.tabs(["📊 Análisis y Filtrado Atómico", "🤖 Chatbot ESG", "📄 Generador de Informes"])
 
 # --- PESTAÑA 1 ---
 with tab1:
     st.header("Análisis de Brechas (Filtrado Atómico)")
     archivo = st.file_uploader("Cargar Memoria (PDF/TXT)", type=['pdf', 'txt'])
-    texto = st.text_area("O pega el texto aquí:", height=200)
+    texto = st.text_area("O pega el texto aquí para análisis inmediato:", height=200)
     if st.button("Ejecutar Análisis"):
         st.success("Análisis técnico en curso...")
 
-# --- PESTAÑA 2: CHATBOT ESG ---
+# --- PESTAÑA 2 ---
 with tab2:
-    st.header("Asistente Técnico IFRS S1/S2")
-    st.write("Consulta los pilares normativos de IFRS S1 y S2.")
-    consulta = st.text_input("Ingresa tu consulta técnica aquí:")
-    
+    st.header("Asistente Técnico ESG")
+    st.write("Consulta pilares IFRS S1 y S2.")
+    consulta = st.text_input("Ingresa tu consulta:")
     if st.button("Consultar"):
-        st.write("---")
-        # Lógica de respuesta basada en los pilares fundamentales
-        if "s1" in consulta.lower() or "s2" in consulta.lower() or "brecha" in consulta.lower():
-            st.markdown("""
-            **Análisis según IFRS S1/S2:**
-            
-            Como consultor, recuerda que el sistema audita bajo estos 4 pilares fundamentales:
-            
-            1. **Gobernanza:** Procesos, controles y procedimientos para monitorear riesgos y oportunidades.
-            2. **Estrategia:** Enfoque para abordar los riesgos climáticos y su impacto en el modelo de negocio.
-            3. **Gestión de Riesgos:** Cómo se identifican, evalúan y priorizan los riesgos de sostenibilidad.
-            4. **Métricas y Objetivos:** Revelación de indicadores (ej. emisiones GEI, uso de energía).
-            
-            *Tip de Auditoría:* Verifica si la memoria corporativa presenta la información de manera conectada con los estados financieros.
-            """)
-        else:
-            st.write("Por favor, consulta por los pilares IFRS S1 o S2 para obtener el detalle normativo.")
+        st.markdown("""
+        **Análisis IFRS S1/S2:**
+        1. **Gobernanza:** Monitoreo de riesgos.
+        2. **Estrategia:** Impacto financiero climático.
+        3. **Gestión de Riesgos:** Identificación y mitigación.
+        4. **Métricas:** Revelación de indicadores (GEI).
+        """)
 
-# --- PESTAÑA 3: GENERADOR DE INFORMES ---
+# --- PESTAÑA 3 ---
 with tab3:
     st.header("Generador de Informe Ejecutivo")
     empresa = st.text_input("Nombre de la Empresa")
@@ -55,7 +44,7 @@ with tab3:
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", 'B', 16)
-        pdf.cell(0, 10, f"Informe: {empresa}", ln=True)
+        pdf.cell(0, 10, f"Informe de Auditoria: {empresa}", ln=True, align='C')
         
         # Gráfica
         fig, ax = plt.subplots(figsize=(4, 3))
@@ -67,8 +56,9 @@ with tab3:
         pdf.ln(85)
         pdf.multi_cell(0, 10, f"Resumen:\nS1: {s1}%\nS2: {s2}%\n\nObservaciones:\n{obs}")
         
-        # --- CORRECCIÓN AQUÍ: .output() devuelve los bytes directamente ---
-        pdf_bytes = pdf.output()
+        # --- SOLUCIÓN: Convertir explícitamente a bytes ---
+        pdf_output = pdf.output()
+        pdf_bytes = bytes(pdf_output) 
         
         st.download_button(
             label="Descargar Informe PDF",
@@ -76,12 +66,3 @@ with tab3:
             file_name="Informe_Auditoria.pdf",
             mime="application/pdf"
         )
-        
-        # Gráfica
-        fig, ax = plt.subplots(figsize=(4, 3))
-        ax.bar(['S1', 'S2'], [s1, s2], color=['#2E86C1', '#C0392B'])
-        plt.savefig("grafica.png")
-        pdf.image("grafica.png", x=50, w=80)
-        
-        pdf_bytes = pdf.output(dest='S').encode('latin-1')
-        st.download_button("Descargar Informe", pdf_bytes, "Informe.pdf", "application/pdf")
