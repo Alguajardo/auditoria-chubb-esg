@@ -32,13 +32,50 @@ with tab2:
         4. **Métricas:** Revelación de indicadores (GEI).
         """)
 
-# --- PESTAÑA 3 ---
+# --- PESTAÑA 3: GENERADOR DE INFORMES ---
 with tab3:
-    st.header("Generador de Informe Ejecutivo")
-    empresa = st.text_input("Nombre de la Empresa")
-    s1 = st.slider("Avance IFRS S1 (%)", 0, 100, 50)
-    s2 = st.slider("Avance IFRS S2 (%)", 0, 100, 50)
-    obs = st.text_area("Observaciones")
+    st.header("Generador de Informe Técnico (Filtrado Atómico)")
+    
+    # Inputs técnicos
+    empresa = st.text_input("Empresa Auditada")
+    brechas = st.text_area("Brechas significativas (Párrafos detectados):", 
+                           "Ej: Párrafo 12 - Falta de revelación sobre Scope 3.")
+    
+    # Calculadora de Conectividad Financiera
+    st.subheader("Calculadora de Conectividad Financiera")
+    col1, col2 = st.columns(2)
+    impacto_financiero = col1.number_input("Impacto Financiero Estimado (USD)", value=0)
+    probabilidad = col2.slider("Probabilidad de Materialidad (%)", 0, 100)
+    
+    conectividad = impacto_financiero * (probabilidad / 100)
+    st.info(f"Conectividad Financiera Estimada: ${conectividad:,.2f}")
+    
+    recomendaciones = st.text_area("Recomendaciones Estratégicas:")
+
+    if st.button("Generar Informe PDF"):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", 'B', 16)
+        pdf.cell(0, 10, f"Informe de Auditoría ESG: {empresa}", ln=True, align='C')
+        
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, "1. Brechas Significativas (Filtrado Atómico)", ln=True)
+        pdf.set_font("Arial", size=10)
+        pdf.multi_cell(0, 7, brechas)
+        
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, "2. Conectividad Financiera", ln=True)
+        pdf.set_font("Arial", size=10)
+        pdf.cell(0, 7, f"Conectividad estimada (Impacto * Probabilidad): ${conectividad:,.2f}", ln=True)
+        
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, "3. Recomendaciones", ln=True)
+        pdf.set_font("Arial", size=10)
+        pdf.multi_cell(0, 7, recomendaciones)
+        
+        # Convertir a bytes
+        pdf_bytes = bytes(pdf.output())
+        st.download_button("Descargar Informe Técnico", pdf_bytes, "Informe_Tecnico_ESG.pdf", "application/pdf")
     
     if st.button("Generar Informe PDF"):
         pdf = FPDF()
