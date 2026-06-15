@@ -1,42 +1,60 @@
 import streamlit as st
 from fpdf import FPDF
-import os
+import matplotlib.pyplot as plt
+import io
 
-st.title("Generador de Reporte IFRS S1/S2")
+st.set_page_config(page_title="Auditoría ESG Pro", layout="wide")
+st.title("Plataforma de Auditoría ESG - Informe Ejecutivo")
 
 # --- Formulario de Entrada ---
-st.sidebar.header("Datos de Auditoría")
-empresa = st.sidebar.text_input("Nombre de la Empresa")
-ejecutivo = st.sidebar.text_input("Consultor a cargo", "Alberto Guajardo")
-brecha_s1 = st.sidebar.slider("Nivel de cumplimiento IFRS S1 (%)", 0, 100, 50)
-brecha_s2 = st.sidebar.slider("Nivel de cumplimiento IFRS S2 (%)", 0, 100, 50)
-observaciones = st.text_area("Observaciones y Recomendaciones Técnicas")
+with st.sidebar:
+    st.header("Entrada de Datos")
+    empresa = st.text_input("Nombre de la Empresa")
+    perfil = st.text_area("Perfil de la Empresa")
+    materialidad = st.text_area("Análisis de Materialidad")
+    
+    st.subheader("Filtrado Atómico")
+    s1 = st.slider("Avance IFRS S1 (%)", 0, 100, 50)
+    s2 = st.slider("Avance IFRS S2 (%)", 0, 100, 50)
+    
+    conectividad = st.text_area("Conectividad Financiera")
+    hallazgos = st.text_area("Base de Datos de Hallazgos")
+    recomendaciones = st.text_area("Recomendaciones")
+    conclusiones = st.text_area("Conclusiones")
 
-if st.button("Generar Informe PDF"):
-    temp_file = "Reporte_IFRS.pdf"
+if st.button("Generar Informe Completo"):
+    # 1. Generar Gráfica
+    fig, ax = plt.subplots()
+    ax.bar(['IFRS S1', 'IFRS S2'], [s1, s2], color=['#4F81BD', '#C0504D'])
+    ax.set_ylim(0, 100)
+    ax.set_title("Nivel de Cumplimiento IFRS")
+    plt.savefig("grafica.png")
     
-    # --- Estructura del PDF ---
+    # 2. Crear PDF
     pdf = FPDF()
-    pdf.add_page()
     
-    # Encabezado
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, "INFORME DE ANALISIS DE BRECHAS IFRS", ln=True, align='C')
-    pdf.ln(10)
+    def agregar_seccion(titulo, contenido, nueva_pagina=True):
+        if nueva_pagina: pdf.add_page()
+        pdf.set_font("Arial", 'B', 16)
+        pdf.cell(0, 10, titulo, ln=True)
+        pdf.ln(5)
+        pdf.set_font("Arial", size=12)
+        pdf.multi_cell(0, 10, contenido)
+
+    # Contenido
+    agregar_seccion("Introducción", "Informe de auditoría técnica basado en estándares IFRS S1/S2.", False)
+    agregar_seccion("Perfil de la Empresa", perfil)
+    agregar_seccion("Materialidad", materialidad)
+    agregar_seccion("Filtrado Atómico (Brechas IFRS S1/S2)", f"Avance S1: {s1}%\nAvance S2: {s2}%")
     
-    # Cuerpo
-    pdf.set_font("Arial", size=12)
-    pdf.cell(0, 10, f"Empresa: {empresa}", ln=True)
-    pdf.cell(0, 10, f"Consultor: {ejecutivo}", ln=True)
-    pdf.ln(5)
-    pdf.cell(0, 10, f"Avance IFRS S1: {brecha_s1}%", ln=True)
-    pdf.cell(0, 10, f"Avance IFRS S2: {brecha_s2}%", ln=True)
-    pdf.ln(10)
-    pdf.cell(0, 10, "Observaciones:", ln=True)
-    pdf.multi_cell(0, 10, observaciones)
+    # Insertar Gráfica
+    pdf.image("grafica.png", x=10, y=None, w=100)
     
-    # Salida
-    pdf.output(temp_file)
-    
-    with open(temp_file, "rb") as f:
-        st.download_button("Descargar Informe IFRS", f, "Informe_IFRS.pdf", "application/pdf")
+    agregar_seccion("Conectividad Financiera", conectividad)
+    agregar_seccion("Base de Datos de Hallazgos", hallazgos)
+    agregar_seccion("Recomendaciones", recomendaciones)
+    agregar_seccion("Conclusiones", conclusiones)
+
+    # 3. Preparar descarga
+    pdf_bytes = pdf.output(dest='S').encode('latin-1')
+    st.download_button("Descargar Informe Completo", pdf_bytes, f"Informe_{empresa}.pdf", "application/pdf")
