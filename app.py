@@ -22,7 +22,6 @@ with tab1:
 # --- PESTAÑA 2: CHATBOT EXPERTO ---
 with tab2:
     st.header("Asistente Técnico IFRS S1/S2")
-    # Base de conocimiento integrada para evitar errores de archivo
     norma_db = {
         "gobernanza": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar riesgos.",
         "estrategia": "Párrafo 27: La entidad debe revelar cómo los riesgos de sostenibilidad afectan su modelo de negocio y flujos de efectivo.",
@@ -38,7 +37,21 @@ with tab2:
         else:
             st.warning("Concepto no encontrado. Prueba con 'gobernanza', 'estrategia' o 'alcance 3'.")
 
-File "/mount/src/auditoria-chubb-esg/app.py", line 67
-          st.download_button("Descargar Informe APA 7", pdf_bytes, "Informe
-                                                                   ^
-SyntaxError: unterminated string literal (detected at line 67)cargar Informe APA 7", pdf_bytes, "Informe
+# --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7) ---
+with tab3:
+    st.header("Generador de Informe Técnico - Formato APA 7")
+    empresa = st.text_input("Empresa Auditada", key="emp_nombre")
+    introduccion = st.text_area("Introducción:", "El presente informe técnico detalla la auditoría de sostenibilidad basada en los estándares IFRS S1 y S2.")
+    brechas = st.text_area("Análisis (Brechas detectadas):", "Análisis de los párrafos críticos: se observa una brecha en la revelación de alcance 3.")
+    recomendaciones = st.text_area("Recomendaciones:", "Se recomienda al directorio fortalecer los mecanismos de gobernanza climática.")
+
+    if st.button("Generar Informe Formato APA", key="btn_pdf_apa"):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Times", 'B', 14)
+        pdf.cell(0, 10, f"Informe: {empresa}", ln=True, align='C')
+        pdf.ln(10)
+        
+        for titulo, contenido in [("Introducción", introduccion), ("Análisis", brechas), ("Recomendaciones", recomendaciones)]:
+            pdf.set_font("Times", 'B', 12)
+            pdf.cell(0, 10, titulo
