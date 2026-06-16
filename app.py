@@ -12,7 +12,7 @@ tab1, tab2, tab3 = st.tabs(["📊 Análisis por Pilares", "🤖 Chatbot ESG", "�
 # --- PESTAÑA 1: DASHBOARD ---
 with tab1:
     st.header("Análisis de Brechas (Filtrado Atómico)")
-    archivo = st.file_uploader("Cargar Memoria", type=['pdf', 'txt'])
+    st.file_uploader("Cargar Memoria", type=['pdf', 'txt'])
     texto = st.text_area("Pega el texto para análisis:", height=150)
     
     if st.button("Ejecutar Análisis"):
@@ -23,7 +23,6 @@ with tab1:
         col4.metric("Métricas", "Crítico", "!")
         
         st.markdown("---")
-        
         col_g, col_e = st.columns([1, 1])
         with col_g:
             st.subheader("Distribución de Riesgos")
@@ -60,10 +59,10 @@ with tab2:
 
 # --- PESTAÑA 3: INFORME TIPO AUSTRALIS ---
 with tab3:
-    st.header("Generador de Informe Técnico - Formato ESG")
+    st.header("Generador de Informe Técnico")
     empresa = st.text_input("Empresa", "Australis Seafoods S.A.")
-    intro = st.text_area("Introducción:", "Este análisis ESG aplica convergencia estratégica de estándares IFRS S1/S2.")
-    analisis = st.text_area("Análisis:", "La empresa estructura su gobernanza bajo principios de integridad.")
+    intro = st.text_area("Introducción:")
+    analisis = st.text_area("Análisis:")
     
     if st.button("Generar Informe PDF"):
         pdf = FPDF()
@@ -76,5 +75,7 @@ with tab3:
         pdf.cell(0, 10, "Análisis", ln=True)
         pdf.multi_cell(0, 7, analisis)
         
-        pdf_bytes = bytes(pdf.output())
+        # Método compatible para generar bytes
+        pdf_bytes = pdf.output(dest='S').encode('latin-1')
+        
         st.download_button("Descargar Informe", pdf_bytes, "Informe_ESG.pdf", "application/pdf")
