@@ -6,76 +6,68 @@ import pandas as pd
 st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
 st.title("Plataforma Integral de Auditoría ESG")
 
-# Pestañas
+# Inicializar estado para compartir datos entre pestañas
+if 'resultados_analisis' not in st.session_state:
+    st.session_state.resultados_analisis = {
+        "Gobernanza": "Pendiente de análisis",
+        "Estrategia": "Pendiente de análisis",
+        "Riesgos": "Pendiente de análisis",
+        "Metricas": "Pendiente de análisis",
+        "Conectividad": "Pendiente de análisis",
+        "Conclusiones": "Pendiente de análisis",
+        "Recomendaciones": "Pendiente de análisis"
+    }
+
 tab1, tab2, tab3 = st.tabs(["📊 Análisis por Pilares", "🤖 Chatbot ESG", "📄 Generador de Informes"])
 
-# --- PESTAÑA 1: DASHBOARD ---
+# --- PESTAÑA 1: ANÁLISIS ---
 with tab1:
     st.header("Análisis de Brechas (Filtrado Atómico)")
-    st.file_uploader("Cargar Memoria", type=['pdf', 'txt'])
-    texto = st.text_area("Pega el texto para análisis:", height=150)
-    
+    archivo = st.file_uploader("Cargar Memoria", type=['pdf', 'txt'])
     if st.button("Ejecutar Análisis"):
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Gobernanza", "OK")
-        col2.metric("Estrategia", "Brecha", "-1")
-        col3.metric("Riesgos", "OK")
-        col4.metric("Métricas", "Crítico", "!")
-        
-        st.markdown("---")
-        col_g, col_e = st.columns([1, 1])
-        with col_g:
-            st.subheader("Distribución de Riesgos")
-            st.bar_chart(pd.DataFrame({"Valor": [20, 50, 30]}, index=["Gobernanza", "Estrategia", "Métricas"]))
-        with col_e:
-            st.subheader("Interpretación")
-            st.write("- **Estrategia:** Alta brecha, requiere enfoque financiero.")
-            st.write("- **Métricas:** Crítico en Scope 3.")
-            
-        tab_g, tab_e, tab_r, tab_m = st.tabs(["Gobernanza", "Estrategia", "Riesgos", "Métricas"])
-        with tab_g: st.info("Cumple Párrafo 26.")
-        with tab_e: st.warning("Falta horizonte 3 años (Párrafo 27).")
-        with tab_r: st.info("Falta cuantificación financiera.")
-        with tab_m: st.error("No se reporta alcance 3.")
+        # Simulamos el análisis técnico
+        st.session_state.resultados_analisis = {
+            "Gobernanza": "Cumple Párrafo 26; el comité de ética está activo.",
+            "Estrategia": "Brecha: Falta horizonte temporal de 3 años (Párrafo 27).",
+            "Riesgos": "Identificados riesgos climáticos, pero falta cuantificación financiera.",
+            "Metricas": "Crítico: No se reporta alcance 3 (Párrafo 28).",
+            "Conectividad": "Débil vínculo entre riesgos climáticos y estados financieros.",
+            "Conclusiones": "Madurez en gobernanza pero requiere cuantificación financiera.",
+            "Recomendaciones": "Vincular riesgos climáticos con el Estado de Resultados."
+        }
+        st.success("Análisis realizado. Datos cargados en el generador de informes.")
 
 # --- PESTAÑA 2: CHATBOT ---
 with tab2:
     st.header("Asistente Técnico IFRS S1/S2")
-    norma_db = {
-        "gobernanza": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo.",
-        "estrategia": "Párrafo 27: La entidad debe revelar cómo los riesgos afectan su modelo de negocio.",
-        "alcance 3": "Párrafo 28: La entidad debe revelar emisiones de GEI de alcance 3."
-    }
-    consulta = st.text_input("Ingresa concepto (ej: gobernanza, estrategia):")
+    consulta = st.text_input("Consulta normativa:")
     if st.button("Consultar"):
-        b = consulta.strip().lower()
-        found = False
-        for k in norma_db:
-            if k in b:
-                st.success(f"Referencia para '{k}':")
-                st.info(norma_db[k])
-                found = True
-        if not found: st.warning("Concepto no encontrado.")
+        st.info("Párrafo 26-28: La entidad debe revelar riesgos y oportunidades de sostenibilidad.")
 
-# --- PESTAÑA 3: INFORME TIPO AUSTRALIS ---
+# --- PESTAÑA 3: GENERADOR DE INFORMES ---
 with tab3:
     st.header("Generador de Informe Técnico")
     empresa = st.text_input("Empresa", "Australis Seafoods S.A.")
-    intro = st.text_area("Introducción:")
-    analisis = st.text_area("Análisis:")
     
+    # Mostrar brechas actuales
+    st.subheader("Resumen de Brechas Detectadas")
+    res = st.session_state.resultados_analisis
+    for k, v in res.items():
+        st.write(f"**{k}:** {v}")
+        
     if st.button("Generar Informe PDF"):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Times", 'B', 16)
-        pdf.cell(0, 10, f"Informe: {empresa}", ln=True, align='C')
+        pdf.cell(0, 10, f"Informe ESG: {empresa}", ln=True, align='C')
         pdf.set_font("Times", size=12)
-        pdf.cell(0, 10, "Introducción", ln=True)
-        pdf.multi_cell(0, 7, intro)
-        pdf.cell(0, 10, "Análisis", ln=True)
-        pdf.multi_cell(0, 7, analisis)
         
-        # Método compatible para generar bytes
+        for k, v in res.items():
+            pdf.ln(5)
+            pdf.set_font("Times", 'B', 12)
+            pdf.cell(0, 10, k, ln=True)
+            pdf.set_font("Times", size=11)
+            pdf.multi_cell(0, 7, v)
+        
         pdf_bytes = pdf.output(dest='S').encode('latin-1')
-        
         st.download_button("Descargar Informe", pdf_bytes, "Informe_ESG.pdf", "application/pdf")
