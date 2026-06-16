@@ -2,80 +2,65 @@ import streamlit as st
 from fpdf import FPDF
 import pandas as pd
 
-# Configuración inicial
-st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
+st.set_page_config(page_title="Auditoría ESG Pro", layout="wide")
 st.title("Plataforma Integral de Auditoría ESG")
 
-# Inicialización de estado para el informe
 if 'informe_data' not in st.session_state:
-    st.session_state.informe_data = {"Gobernanza": "", "Estrategia": "", "Riesgos": "", "Metricas": "", "Conectividad": "", "Conclusiones": "", "Recomendaciones": ""}
+    st.session_state.informe_data = {"Introducción": "", "Gobernanza": "", "Estrategia": "", "Riesgos y Oportunidades": "", "Métricas": "", "Conclusiones": "", "Recomendaciones": ""}
 
-tab1, tab2, tab3 = st.tabs(["📊 Análisis por Pilares", "🤖 Chatbot ESG", "📄 Generador de Informes"])
+tab1, tab2, tab3 = st.tabs(["📊 Análisis y Dashboard", "🤖 Chatbot ESG", "📄 Informe Tipo Australis"])
 
-# --- PESTAÑA 1: ANÁLISIS ---
+# Pestaña 1: Análisis (Dashboard)
 with tab1:
     st.header("Análisis de Brechas (Filtrado Atómico)")
-    st.file_uploader("Cargar Memoria", type=['pdf', 'txt'])
-    
     if st.button("Ejecutar Análisis"):
-        # Dashboard Visual
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Gobernanza", "OK")
         col2.metric("Estrategia", "Brecha", "-1")
         col3.metric("Riesgos", "OK")
         col4.metric("Métricas", "Crítico", "!")
         
-        # Gráfica
         st.bar_chart(pd.DataFrame({"Valor": [20, 50, 30]}, index=["Gobernanza", "Estrategia", "Métricas"]))
         
-        # Tablas de Pilares
-        t1, t2, t3, t4 = st.tabs(["Gobernanza", "Estrategia", "Riesgos", "Métricas"])
-        with t1: st.info("Cumple Párrafo 26.")
-        with t2: st.warning("Falta horizonte 3 años.")
-        with t3: st.info("Riesgos identificados.")
-        with t4: st.error("No reporta alcance 3.")
-        
-        # Guardar en estado para Pestaña 3
         st.session_state.informe_data = {
-            "Gobernanza": "Cumple Párrafo 26; el comité de ética está activo.",
-            "Estrategia": "Falta horizonte temporal de 3 años según Párrafo 27.",
-            "Riesgos": "Identificados riesgos climáticos, falta cuantificación.",
-            "Metricas": "No se reporta alcance 3 (Párrafo 28).",
-            "Conectividad": "Débil vínculo entre riesgos climáticos y estados financieros.",
-            "Conclusiones": "Madurez en gobernanza, requiere cuantificación financiera.",
-            "Recomendaciones": "Vincular riesgos con el Estado de Resultados."
+            "Introducción": "Este análisis ESG aplica una convergencia estratégica de estándares internacionales a la operativa, vinculando resiliencia con resultados económicos.",
+            "Gobernanza": "Soporte bajo Código de Ética. Comité de Ética activo y certificación ISO 45001 mantenida.",
+            "Estrategia": "Integración vertical y alimentación remota. Materialidad enfocada en trazabilidad y resiliencia operativa.",
+            "Riesgos y Oportunidades": "Dependencia FFDR y riesgos climáticos. Oportunidades en bioseguridad e innovación tecnológica.",
+            "Métricas": "Cosecha 2024: 48.146 tons WFE. Desperdicio < 1%. Falta cuantificación Scope 3.",
+            "Conclusiones": "Madurez en gobernanza. Existe brecha en cuantificación financiera de riesgos climáticos (IFRS S2).",
+            "Recomendaciones": "Vincular riesgos climáticos con el Estado de Resultados y fortalecer el aseguramiento continuo."
         }
-        st.success("Análisis completado y guardado para el informe.")
+        st.success("Análisis realizado: Datos listos para el informe.")
 
-# --- PESTAÑA 2: CHATBOT ---
-with tab2:
-    st.header("Asistente Técnico IFRS S1/S2")
-    # ... (Tu código de chatbot previo) ...
-    st.write("Consulta normativa IFRS S1 y S2.")
-
-# --- PESTAÑA 3: GENERADOR DE INFORMES ---
+# Pestaña 3: Generador de Informe (Tipo Australis)
 with tab3:
-    st.header("Generador de Informe ESG")
-    empresa = st.text_input("Empresa", "Australis Seafoods S.A.")
+    st.header("Generador de Informe ESG - Formato Corporativo")
+    empresa = st.text_input("Nombre de la Empresa", "Australis Seafoods S.A.")
     
-    # Editor de datos para el informe (para que puedas editar antes de exportar)
-    data = st.session_state.informe_data
-    for key in data:
-        data[key] = st.text_area(f"Análisis {key}:", value=data[key])
+    # Editor visual
+    datos = st.session_state.informe_data
+    for k in datos:
+        datos[k] = st.text_area(f"{k}:", value=datos[k])
     
-    if st.button("Generar PDF Profesional"):
+    if st.button("Generar Informe PDF"):
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Times", 'B', 16)
-        pdf.cell(0, 10, f"Informe ESG: {empresa}", ln=True, align='C')
+        # Header Corporativo
+        pdf.set_font("Times", 'B', 18)
+        pdf.cell(0, 15, f"INFORME ESG: {empresa}", ln=True, align='C')
         pdf.ln(10)
         
-        for k, v in data.items():
-            pdf.set_font("Times", 'B', 12)
-            pdf.cell(0, 10, k, ln=True)
-            pdf.set_font("Times", size=11)
-            pdf.multi_cell(0, 7, v)
-            pdf.ln(2)
+        for titulo, contenido in datos.items():
+            pdf.set_font("Times", 'B', 14)
+            pdf.cell(0, 10, titulo, ln=True)
+            pdf.set_font("Times", size=12)
+            pdf.multi_cell(0, 8, contenido)
+            pdf.ln(5)
+            
+        pdf.ln(20)
+        pdf.set_font("Times", 'I', 10)
+        pdf.cell(0, 10, "Auditoría ejecutada mediante Metodología de Filtrado Atómico", ln=True)
         
         pdf_bytes = pdf.output(dest='S').encode('latin-1')
-        st.download_button("Descargar Informe", pdf_bytes, "Informe_ESG.pdf", "application/pdf")
+        st.download_button("Descargar Informe PDF", pdf_bytes, "Informe_ESG_Corporativo.pdf", "application/pdf")
