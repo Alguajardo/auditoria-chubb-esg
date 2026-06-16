@@ -1,25 +1,4 @@
-from thefuzz import process # Importar librería de búsqueda difusa
-
-# --- PESTAÑA 2: CHATBOT EXPERTO (BÚSQUEDA DIFUSA) ---
-with tab2:
-    st.header("Asistente Técnico IFRS S1 (Búsqueda Inteligente)")
-    
-    # Supongamos que tu CSV tiene: parrafo_id, clave, texto
-    # Ejemplo: 26, gobernanza, "El objetivo del requisito..."
-    df = pd.read_csv("ifrs_s1.csv") 
-    
-    consulta = st.text_input("¿Qué concepto buscas? (ej: gobernanza, alcance 3, riesgos):", key="search_input")
-    
-    if st.button("Buscar en la Norma"):
-        if consulta:
-            # Buscamos la palabra clave más cercana en la columna 'clave' de tu CSV
-            claves = df['clave'].tolist()
-            mejor_coincidencia, score = process.extractOne(consulta.lower(), claves)
-            
-            if score > 60: # Si la coincidencia es mayor al 60%
-                resultado = df[df['clave'] == mejor_coincidencia].iloc[0]
-                st.success(f"Concepto encontrado: {mejor_coincidencia.upper()} (Confianza: {score}%)")
-                st.write(f"**Referencia:** {resultado['texto']}")
-                st.info("Nota de Auditoría: Recuerda verificar si este control está documentado en el sistema de gestión del cliente.")
-            else:
-                st.warning("No encontré un concepto claro. Prueba con términos como 'gobernanza', 'estrategia' o 'riesgos'.")
+streamlit
+fpdf
+pandas
+thefuzz
