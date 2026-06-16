@@ -15,19 +15,33 @@ with tab1:
     if st.button("Ejecutar Análisis"):
         st.success("Análisis realizado.")
 
-# --- PESTAÑA 2 ---
+# --- PESTAÑA 2: CHATBOT EXPERTO (BÚSQUEDA MEJORADA) ---
 with tab2:
     st.header("Asistente Técnico IFRS S1/S2")
+    
+    # Base de conocimiento (claves en minúscula para búsqueda segura)
     norma_db = {
-        "gobernanza": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear riesgos.",
-        "estrategia": "Párrafo 27: La entidad debe revelar cómo los riesgos de sostenibilidad afectan su modelo de negocio y flujos de efectivo."
+        "gobernanza": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar riesgos.",
+        "estrategia": "Párrafo 27: La entidad debe revelar cómo los riesgos de sostenibilidad afectan su modelo de negocio y flujos de efectivo.",
+        "alcance 3": "Párrafo 28: La entidad debe revelar emisiones de GEI de alcance 3, incluyendo las categorías más significativas."
     }
-    consulta = st.text_input("Concepto (ej: gobernanza, estrategia):")
-    if st.button("Consultar"):
-        if consulta.lower() in norma_db:
-            st.info(norma_db[consulta.lower()])
-        else:
-            st.warning("Concepto no encontrado.")
+    
+    consulta = st.text_input("Ingresa concepto (ej: gobernanza, estrategia, alcance 3):", key="input_chat_2")
+    
+    if st.button("Consultar Normativa", key="btn_chat_2"):
+        # Buscamos si la consulta está contenida en alguna de nuestras claves
+        busqueda = consulta.strip().lower()
+        encontrado = False
+        
+        for clave in norma_db:
+            if clave in busqueda:
+                st.success(f"Referencia Técnica encontrada para '{clave}':")
+                st.info(norma_db[clave])
+                encontrado = True
+                break # Sale del bucle al encontrar la primera coincidencia
+        
+        if not encontrado:
+            st.warning(f"No encontré '{busqueda}'. Prueba escribiendo: gobernanza, estrategia o alcance 3.")
 
 # --- PESTAÑA 3 ---
 with tab3:
