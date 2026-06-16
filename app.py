@@ -5,65 +5,50 @@ import pandas as pd
 st.set_page_config(page_title="Auditoría ESG Pro", layout="wide")
 st.title("Plataforma Integral de Auditoría ESG")
 
-# Inicialización segura de estado
-if 'informe_data' not in st.session_state:
-    st.session_state.informe_data = {}
+# Inicialización segura
 if 'resumen_dashboard' not in st.session_state:
-    st.session_state.resumen_dashboard = {}
+    st.session_state.resumen_dashboard = {"Gobernanza": 20, "Estrategia": 50, "Riesgos": 30, "Métricas": 80}
+if 'informe_data' not in st.session_state:
+    st.session_state.informe_data = {"Gobernanza": "Cumple Párrafo 26.", "Estrategia": "Brecha en horizonte temporal.", "Riesgos": "Falta cuantificación.", "Métricas": "Crítico: No reporta alcance 3."}
 
 tab1, tab2, tab3 = st.tabs(["📊 Análisis y Dashboard", "🤖 Chatbot ESG", "📄 Informe Tipo Australis"])
 
-# Pestaña 1: Análisis
 with tab1:
     st.header("Análisis de Brechas (Filtrado Atómico)")
     if st.button("Ejecutar Análisis"):
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Gobernanza", "OK")
-        col2.metric("Estrategia", "Brecha", "-1")
-        col3.metric("Riesgos", "OK")
-        col4.metric("Métricas", "Crítico", "!")
-        
-        st.session_state.resumen_dashboard = {"Gobernanza": "OK", "Estrategia": "Brecha", "Riesgos": "OK", "Métricas": "Crítico"}
-        st.session_state.informe_data = {
-            "Introducción": "Análisis ESG con enfoque en conectividad financiera.",
-            "Gobernanza": "Cumple Párrafo 26; sistema de ética sólido.",
-            "Estrategia": "Falta horizonte temporal de 3 años (Párrafo 27).",
-            "Riesgos y Oportunidades": "Identificados riesgos climáticos; falta cuantificación.",
-            "Métricas": "No se reporta alcance 3 (Párrafo 28).",
-            "Conclusiones": "Madurez operativa con brechas en reporte IFRS S2.",
-            "Recomendaciones": "Vincular riesgos con el Estado de Resultados."
-        }
-        st.success("Análisis realizado correctamente.")
+        st.bar_chart(pd.DataFrame(st.session_state.resumen_dashboard, index=["Nivel de Brecha (%)"]).T)
+        st.success("Análisis ejecutado.")
 
-# Pestaña 3: Generador de Informe
 with tab3:
     st.header("Generador de Informe ESG")
-    empresa = st.text_input("Empresa", "Australis Seafoods S.A.")
-    
     if st.button("Generar Informe PDF"):
-        # Verificación para evitar el AttributeError
-        if not st.session_state.resumen_dashboard:
-            st.warning("Por favor, ejecuta primero el análisis en la Pestaña 1.")
-        else:
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Times", 'B', 18)
-            pdf.cell(0, 15, f"INFORME ESG: {empresa}", ln=True, align='C')
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Times", 'B', 16)
+        pdf.cell(0, 10, "INFORME EJECUTIVO ESG", ln=True, align='C')
+        
+        # 1. RECUADRO DE DASHBOARD
+        pdf.set_font("Times", 'B', 12)
+        pdf.cell(0, 10, "Dashboard de Brechas (Resumen)", ln=True)
+        pdf.set_draw_color(0, 80, 180) # Azul corporativo
+        pdf.rect(10, 30, 190, 40) # Recuadro
+        
+        # 2. GRÁFICO SIMULADO DENTRO DEL PDF
+        pdf.set_y(35)
+        pdf.set_font("Courier", size=10)
+        for k, v in st.session_state.resumen_dashboard.items():
+            bar = "|" * (v // 5) # Representación visual
+            pdf.cell(0, 8, f"{k:<15} {bar} {v}%", ln=True)
+        
+        # 3. DETALLE POR PILARES
+        pdf.ln(20)
+        pdf.set_font("Times", 'B', 12)
+        for k, v in st.session_state.informe_data.items():
+            pdf.set_fill_color(240, 240, 240)
+            pdf.cell(0, 10, k, ln=True, fill=True)
+            pdf.set_font("Times", size=11)
+            pdf.multi_cell(0, 7, v)
+            pdf.ln(2)
             
-            pdf.set_font("Times", 'B', 14)
-            pdf.cell(0, 10, "Resumen de Brechas (Dashboard)", ln=True)
-            pdf.set_font("Times", size=12)
-            
-            for k, v in st.session_state.resumen_dashboard.items():
-                pdf.cell(0, 8, f"- {k}: {v}", ln=True)
-            pdf.ln(5)
-            
-            for titulo, contenido in st.session_state.informe_data.items():
-                pdf.set_font("Times", 'B', 14)
-                pdf.cell(0, 10, titulo, ln=True)
-                pdf.set_font("Times", size=12)
-                pdf.multi_cell(0, 8, contenido)
-                pdf.ln(2)
-                
-            pdf_bytes = pdf.output(dest='S').encode('latin-1')
-            st.download_button("Descargar Informe PDF", pdf_bytes, "Informe_ESG_Final.pdf", "application/pdf")
+        pdf_bytes = pdf.output(dest='S').encode('latin-1')
+        st.download_button("Descargar Informe PDF", pdf_bytes, "Informe_ESG_Final.pdf", "application/pdf")
