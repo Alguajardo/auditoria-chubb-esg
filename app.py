@@ -19,36 +19,31 @@ with tab1:
         st.write("1. **Párrafo 12 (Gobernanza):** Alineado con IFRS S1.")
         st.write("2. **Párrafo 28 (Métricas):** Brecha detectada (Falta de Scope 3).")
 
-# --- PESTAÑA 2: CHATBOT IFRS S1/S2 (BÚSQUEDA FLEXIBLE) ---
+from thefuzz import process # Importar librería de búsqueda difusa
+
+# --- PESTAÑA 2: CHATBOT EXPERTO (BÚSQUEDA DIFUSA) ---
 with tab2:
-    st.header("Asistente Técnico IFRS S1/S2")
+    st.header("Asistente Técnico IFRS S1 (Búsqueda Inteligente)")
     
-    # Aquí puedes agregar cuantos párrafos necesites de forma rápida
-    norma_db = {
-        "15": "Párrafo 15: La entidad debe revelar información sobre los riesgos y oportunidades relacionados con la sostenibilidad que podrían afectar sus flujos de efectivo, su acceso a la financiación o el costo del capital.",
-        "26": "Párrafo 26: El objetivo del requisito de gobernanza es permitir que los usuarios comprendan el gobierno corporativo utilizado para monitorear y gestionar riesgos.",
-        "27": "Párrafo 27: La entidad debe revelar órganos de gobierno y cómo garantizan los controles.",
-        "28": "Párrafo 28: La entidad debe revelar las habilidades y competencias requeridas para supervisar riesgos de sostenibilidad.",
-        "estrategia": "La estrategia debe describir cómo los riesgos afectan el modelo de negocio y flujos de efectivo."
-    }
+    # Supongamos que tu CSV tiene: parrafo_id, clave, texto
+    # Ejemplo: 26, gobernanza, "El objetivo del requisito..."
+    df = pd.read_csv("ifrs_s1.csv") 
     
-    consulta = st.text_input("Ingresa número de párrafo (ej: 15, 26, 28):", key="input_chat_2")
+    consulta = st.text_input("¿Qué concepto buscas? (ej: gobernanza, alcance 3, riesgos):", key="search_input")
     
-    if st.button("Consultar Normativa", key="btn_chat_2"):
-        busqueda = consulta.strip().lower()
-        
-        # Búsqueda inteligente que busca si el número ingresado está en nuestra base
-        encontrado = False
-        for clave, contenido in norma_db.items():
-            if clave in busqueda:
-                st.success(f"Extracto técnico encontrado:")
-                st.write(contenido)
-                encontrado = True
-        
-        if not encontrado:
-            # Si no está en la base, damos una respuesta genérica profesional
-            st.info(f"El párrafo {busqueda} no está en mi base de consulta rápida. Sin embargo, el estándar IFRS S1 establece que toda revelación debe ser **material**, **comparable** y **verificable** según el marco de la norma.")
-# --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7 + CONECTIVIDAD FINANCIERA) ---
+    if st.button("Buscar en la Norma"):
+        if consulta:
+            # Buscamos la palabra clave más cercana en la columna 'clave' de tu CSV
+            claves = df['clave'].tolist()
+            mejor_coincidencia, score = process.extractOne(consulta.lower(), claves)
+            
+            if score > 60: # Si la coincidencia es mayor al 60%
+                resultado = df[df['clave'] == mejor_coincidencia].iloc[0]
+                st.success(f"Concepto encontrado: {mejor_coincidencia.upper()} (Confianza: {score}%)")
+                st.write(f"**Referencia:** {resultado['texto']}")
+                st.info("Nota de Auditoría: Recuerda verificar si este control está documentado en el sistema de gestión del cliente.")
+            else:
+                st.warning("No encontré un concepto claro. Prueba con términos como 'gobernanza', 'estrategia' o 'riesgos'.")# --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7 + CONECTIVIDAD FINANCIERA) ---
 with tab3:
     st.header("Generador de Informe Técnico - Formato APA 7")
     empresa = st.text_input("Empresa Auditada", key="emp_nombre_3")
