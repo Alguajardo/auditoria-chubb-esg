@@ -5,8 +5,14 @@ import pandas as pd
 st.set_page_config(page_title="Auditoría ESG Pro", layout="wide")
 st.title("Plataforma Integral de Auditoría ESG")
 
+# Estado inicial
 if 'informe_data' not in st.session_state:
-    st.session_state.informe_data = {"Introducción": "", "Gobernanza": "", "Estrategia": "", "Riesgos y Oportunidades": "", "Métricas": "", "Conclusiones": "", "Recomendaciones": ""}
+    st.session_state.informe_data = {
+        "Introducción": "", "Gobernanza": "", "Estrategia": "", 
+        "Riesgos y Oportunidades": "", "Métricas": "", 
+        "Conclusiones": "", "Recomendaciones": ""
+    }
+    st.session_state.resumen_dashboard = {}
 
 tab1, tab2, tab3 = st.tabs(["📊 Análisis y Dashboard", "🤖 Chatbot ESG", "📄 Informe Tipo Australis"])
 
@@ -14,53 +20,52 @@ tab1, tab2, tab3 = st.tabs(["📊 Análisis y Dashboard", "🤖 Chatbot ESG", "�
 with tab1:
     st.header("Análisis de Brechas (Filtrado Atómico)")
     if st.button("Ejecutar Análisis"):
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Gobernanza", "OK")
-        col2.metric("Estrategia", "Brecha", "-1")
-        col3.metric("Riesgos", "OK")
-        col4.metric("Métricas", "Crítico", "!")
+        # Dashboard métricas
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Gobernanza", "OK")
+        c2.metric("Estrategia", "Brecha", "-1")
+        c3.metric("Riesgos", "OK")
+        c4.metric("Métricas", "Crítico", "!")
         
-        st.bar_chart(pd.DataFrame({"Valor": [20, 50, 30]}, index=["Gobernanza", "Estrategia", "Métricas"]))
-        
+        # Guardar resultados para el PDF
+        st.session_state.resumen_dashboard = {"Gobernanza": "OK", "Estrategia": "Brecha", "Riesgos": "OK", "Métricas": "Crítico"}
         st.session_state.informe_data = {
-            "Introducción": "Este análisis ESG aplica una convergencia estratégica de estándares internacionales a la operativa, vinculando resiliencia con resultados económicos.",
-            "Gobernanza": "Soporte bajo Código de Ética. Comité de Ética activo y certificación ISO 45001 mantenida.",
-            "Estrategia": "Integración vertical y alimentación remota. Materialidad enfocada en trazabilidad y resiliencia operativa.",
-            "Riesgos y Oportunidades": "Dependencia FFDR y riesgos climáticos. Oportunidades en bioseguridad e innovación tecnológica.",
-            "Métricas": "Cosecha 2024: 48.146 tons WFE. Desperdicio < 1%. Falta cuantificación Scope 3.",
-            "Conclusiones": "Madurez en gobernanza. Existe brecha en cuantificación financiera de riesgos climáticos (IFRS S2).",
-            "Recomendaciones": "Vincular riesgos climáticos con el Estado de Resultados y fortalecer el aseguramiento continuo."
+            "Introducción": "Análisis ESG con enfoque en conectividad financiera.",
+            "Gobernanza": "Cumple Párrafo 26; sistema de ética sólido.",
+            "Estrategia": "Falta horizonte temporal de 3 años (Párrafo 27).",
+            "Riesgos y Oportunidades": "Identificados riesgos climáticos; falta cuantificación.",
+            "Métricas": "No se reporta alcance 3 (Párrafo 28).",
+            "Conclusiones": "Madurez operativa con brechas en reporte IFRS S2.",
+            "Recomendaciones": "Vincular riesgos con el Estado de Resultados."
         }
-        st.success("Análisis realizado: Datos listos para el informe.")
+        st.success("Análisis realizado: Dashboard y datos guardados.")
 
-# Pestaña 3: Generador de Informe (Tipo Australis)
+# Pestaña 3: Generador de Informe
 with tab3:
-    st.header("Generador de Informe ESG - Formato Corporativo")
-    empresa = st.text_input("Nombre de la Empresa", "Australis Seafoods S.A.")
-    
-    # Editor visual
-    datos = st.session_state.informe_data
-    for k in datos:
-        datos[k] = st.text_area(f"{k}:", value=datos[k])
+    st.header("Generador de Informe ESG")
+    empresa = st.text_input("Empresa", "Australis Seafoods S.A.")
     
     if st.button("Generar Informe PDF"):
         pdf = FPDF()
         pdf.add_page()
-        # Header Corporativo
         pdf.set_font("Times", 'B', 18)
         pdf.cell(0, 15, f"INFORME ESG: {empresa}", ln=True, align='C')
-        pdf.ln(10)
         
-        for titulo, contenido in datos.items():
+        # Sección Dashboard (Resumen)
+        pdf.set_font("Times", 'B', 14)
+        pdf.cell(0, 10, "Resumen de Brechas (Dashboard)", ln=True)
+        pdf.set_font("Times", size=12)
+        for k, v in st.session_state.resumen_dashboard.items():
+            pdf.cell(0, 8, f"- {k}: {v}", ln=True)
+        pdf.ln(5)
+        
+        # Sección Contenido
+        for titulo, contenido in st.session_state.informe_data.items():
             pdf.set_font("Times", 'B', 14)
             pdf.cell(0, 10, titulo, ln=True)
             pdf.set_font("Times", size=12)
             pdf.multi_cell(0, 8, contenido)
-            pdf.ln(5)
+            pdf.ln(2)
             
-        pdf.ln(20)
-        pdf.set_font("Times", 'I', 10)
-        pdf.cell(0, 10, "Auditoría ejecutada mediante Metodología de Filtrado Atómico", ln=True)
-        
         pdf_bytes = pdf.output(dest='S').encode('latin-1')
-        st.download_button("Descargar Informe PDF", pdf_bytes, "Informe_ESG_Corporativo.pdf", "application/pdf")
+        st.download_button("Descargar Informe PDF", pdf_bytes, "Informe_ESG_Final.pdf", "application/pdf")
