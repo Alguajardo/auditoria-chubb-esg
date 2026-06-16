@@ -1,6 +1,14 @@
 import streamlit as st
+import pandas as pd  # <--- ESTA ES LA LÍNEA QUE FALTABA
 from fpdf import FPDF
 import matplotlib.pyplot as plt
+from thefuzz import process
+
+# Configuración inicial
+st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
+st.title("Plataforma Integral de Auditoría ESG")
+
+# ... (resto de tu código)
 
 # Configuración inicial
 st.set_page_config(page_title="Plataforma Auditoría ESG", layout="wide")
