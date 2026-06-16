@@ -38,30 +38,7 @@ with tab2:
         else:
             st.warning("Concepto no encontrado. Prueba con 'gobernanza', 'estrategia' o 'alcance 3'.")
 
-# --- PESTAÑA 3: GENERADOR DE INFORMES (APA 7) ---
-with tab3:
-    st.header("Generador de Informe Técnico - Formato APA 7")
-    empresa = st.text_input("Empresa Auditada", key="emp_nombre")
-    introduccion = st.text_area("Introducción:", "El presente informe técnico detalla la auditoría de sostenibilidad basada en los estándares IFRS S1 y S2.")
-    brechas = st.text_area("Análisis (Brechas detectadas):", "Análisis de los párrafos críticos: se observa una brecha en la revelación de alcance 3.")
-    recomendaciones = st.text_area("Recomendaciones:", "Se recomienda al directorio fortalecer los mecanismos de gobernanza climática.")
-
-    if st.button("Generar Informe Formato APA", key="btn_pdf_apa"):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Times", 'B', 14)
-        pdf.cell(0, 10, f"Informe: {empresa}", ln=True, align='C')
-        pdf.ln(10)
-        
-        for titulo, contenido in [("Introducción", introduccion), ("Análisis", brechas), ("Recomendaciones", recomendaciones)]:
-            pdf.set_font("Times", 'B', 12)
-            pdf.cell(0, 10, titulo, ln=True)
-            pdf.set_font("Times", size=12)
-            pdf.multi_cell(0, 7, contenido)
-            pdf.ln(5)
-            
-        pdf.set_font("Times", 'I', 10)
-        pdf.cell(0, 10, "Auditoría por: Alberto Esteban Guajardo Meneses", ln=True)
-        
-        pdf_bytes = bytes(pdf.output())
-        st.download_button("Descargar Informe APA 7", pdf_bytes, "Informe
+File "/mount/src/auditoria-chubb-esg/app.py", line 67
+          st.download_button("Descargar Informe APA 7", pdf_bytes, "Informe
+                                                                   ^
+SyntaxError: unterminated string literal (detected at line 67)cargar Informe APA 7", pdf_bytes, "Informe
