@@ -8,31 +8,39 @@ st.title("Plataforma Integral de Auditoría ESG")
 # Pestañas
 tab1, tab2, tab3 = st.tabs(["📊 Análisis y Filtrado Atómico", "🤖 Chatbot ESG", "📄 Generador de Informes"])
 
-# --- PESTAÑA 1: DASHBOARD DE BRECHAS (FILTRADO ATÓMICO) ---
+# --- PESTAÑA 1: DASHBOARD Y EXPLICACIÓN DE RESULTADOS ---
 with tab1:
     st.header("Dashboard de Brechas (Filtrado Atómico)")
     archivo = st.file_uploader("Cargar Memoria (PDF/TXT)", type=['pdf', 'txt'], key="up1")
     texto = st.text_area("Pega el texto para análisis:", height=150, key="txt1")
     
     if st.button("Ejecutar Análisis", key="btn_ejecutar"):
-        # Dashboard de métricas rápidas
         col1, col2, col3 = st.columns(3)
         col1.metric("Párrafos Auditados", "42")
         col2.metric("Brechas Detectadas", "3", "-2")
         col3.metric("Nivel de Riesgo", "Alto")
         
         st.markdown("---")
-        st.subheader("Detalle de Brechas Significativas")
         
-        # Resultados con estilo visual
+        # Gráfico y Explicación
+        col_grafico, col_explicacion = st.columns([1, 1])
+        
+        with col_grafico:
+            st.subheader("Distribución de Riesgos")
+            data = {"Gobernanza": 20, "Estrategia": 50, "Métricas": 30}
+            st.bar_chart(data)
+            
+        with col_explicacion:
+            st.subheader("Interpretación de Resultados")
+            st.write("""
+            * **Estrategia (50%):** Es el área con mayor concentración de brechas. Esto indica que el modelo de negocio no está claramente vinculado a los riesgos climáticos a largo plazo.
+            * **Métricas (30%):** Existe una debilidad técnica en la medición de emisiones Scope 3, lo cual es crítico para cumplir con IFRS S2.
+            * **Gobernanza (20%):** Representa el riesgo menor, sugiriendo que la estructura de supervisión del directorio ya cuenta con una base sólida.
+            """)
+            
+        st.subheader("Detalle de Brechas Significativas")
         st.error("Párrafo 28: Incumplimiento IFRS S1 (Falta Scope 3)")
         st.warning("Párrafo 15: Revelación parcial de Gobernanza climática")
-        st.info("Párrafo 10: Estrategia definida, pero sin horizonte temporal claro")
-        
-        # Dashboard simple de conectividad (opcional)
-        st.subheader("Distribución de Riesgos por Pilar")
-        data = {"Gobernanza": 20, "Estrategia": 50, "Métricas": 30}
-        st.bar_chart(data)
 
 # --- PESTAÑA 2: CHATBOT EXPERTO (BÚSQUEDA MEJORADA) ---
 with tab2:
